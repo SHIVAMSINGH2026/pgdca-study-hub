@@ -1,0 +1,18 @@
+// Practical-7: Write a Java Program to demonstrate Break statement using For Loop.
+public class BreakFor {
+    public static void main(String args[]) {
+        for (int i = 1; i <= 10; i++) {
+            if (i == 5) {
+                break;
+            }
+            System.out.println(i);
+        }
+    }
+}
+
+/* Output:
+1
+2
+3
+4
+*/
