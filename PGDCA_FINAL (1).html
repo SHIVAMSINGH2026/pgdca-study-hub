@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGDCA Study Hub</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif;}
+
+/* STICKY FOOTER FIX */
+html{height:100%;}
+body{background:#eaeded;color:#111;display:flex;flex-direction:column;min-height:100vh;}
+
+/* NAVBAR */
+.navbar{background:#131921;color:#fff;position:sticky;top:0;z-index:999;width:100%;}
+
+/* TOP ROW — logo + search + hamburger */
+.nav-top{display:flex;align-items:center;padding:10px 16px;gap:12px;border-bottom:1px solid #3d464d;}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none;}
+.logo-icon{font-size:1.8rem;}
+.logo-text{font-size:1.3rem;font-weight:800;color:#fff;letter-spacing:1px;white-space:nowrap;}
+.logo-text span{color:#ff9900;}
+.search-box{display:flex;flex:1;min-width:0;max-width:600px;}
+.search-select{background:#f3f3f3;border:none;padding:10px 8px;border-radius:4px 0 0 4px;color:#555;font-size:.85rem;flex-shrink:0;}
+.search-input{flex:1;min-width:0;padding:10px 12px;border:none;outline:none;font-size:.95rem;}
+.search-btn{background:#febd69;border:none;padding:10px 18px;border-radius:0 4px 4px 0;cursor:pointer;font-size:1rem;font-weight:700;flex-shrink:0;}
+.search-btn:hover{background:#f3a847;}
+
+/* HAMBURGER BUTTON — only on mobile */
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* NAV MENU BAR — desktop */
+.nav-main{background:#232f3e;padding:0 16px;overflow-x:auto;}
+.nav-menu{display:flex;list-style:none;gap:2px;padding:6px 0;margin:0;}
+.nav-item{padding:9px 16px;cursor:pointer;font-size:.9rem;font-weight:600;border-radius:4px;white-space:nowrap;color:#fff;border:1px solid transparent;transition:all .2s;user-select:none;}
+.nav-item:hover{background:#37475a;border-color:#fff;}
+.nav-item.active{background:#ff9900;color:#131921;}
+
+/* CONTAINER */
+.container{max-width:1300px;width:100%;margin:20px auto;padding:0 16px;flex:1;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  /* show hamburger, hide search select */
+  .hamburger{display:flex;}
+  .search-select{display:none;}
+  .logo-text{font-size:1rem;}
+  .logo-icon{font-size:1.4rem;}
+  .search-input{font-size:.85rem;}
+  .search-btn{padding:10px 12px;}
+
+  /* nav menu — hidden by default, slides down on open */
+  .nav-main{
+    max-height:0;
+    overflow:hidden;
+    padding:0;
+    transition:max-height .35s ease, padding .35s ease;
+    background:#232f3e;
+  }
+  .nav-main.open{
+    max-height:400px;
+    padding:6px 0;
+  }
+  .nav-menu{
+    flex-direction:column;
+    gap:0;
+    padding:0;
+  }
+  .nav-item{
+    padding:14px 20px;
+    border-radius:0;
+    border:none;
+    border-bottom:1px solid #37475a;
+    font-size:1rem;
+  }
+  .nav-item:last-child{border-bottom:none;}
+  .nav-item:hover{background:#37475a;border-color:transparent;}
+}
+
+/* SECTION SWITCHING */
+.section{display:none;}
+.section.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* CARDS & COMMON */
+.card{background:#fff;border-radius:6px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.sec-title{font-size:1.15rem;font-weight:700;color:#131921;border-bottom:3px solid #ff9900;padding-bottom:8px;margin-bottom:18px;}
+
+/* HOME */
+.ticker{background:#232f3e;color:#ff9900;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden;border-radius:4px;margin-bottom:16px;}
+.ticker-label{background:#ff9900;color:#131921;padding:3px 10px;border-radius:3px;font-weight:700;font-size:.8rem;white-space:nowrap;}
+.ticker-text{white-space:nowrap;animation:tick 25s linear infinite;font-size:.88rem;}
+@keyframes tick{0%{transform:translateX(80vw);}100%{transform:translateX(-100%);}}
+
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+.stat{background:#fff;border-radius:6px;padding:14px 20px;flex:1;min-width:120px;box-shadow:0 2px 6px rgba(0,0,0,.08);border-bottom:3px solid #ff9900;display:flex;align-items:center;gap:12px;}
+.stat-icon{font-size:1.6rem;}
+.stat h3{font-size:1.3rem;color:#131921;}
+.stat p{color:#888;font-size:.78rem;}
+
+.home-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;}
+@media(max-width:900px){.home-grid{grid-template-columns:1fr;}}
+
+.notice-list{list-style:none;}
+.notice-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:flex-start;}
+.notice-item:last-child{border-bottom:none;}
+.badge{padding:4px 10px;border-radius:3px;font-size:.75rem;font-weight:700;min-width:60px;text-align:center;flex-shrink:0;}
+.badge.new{background:#c45500;color:#fff;}
+.badge.exam{background:#232f3e;color:#fff;}
+.badge.gen{background:#ff9900;color:#131921;}
+.notice-item h4{font-size:.9rem;margin-bottom:3px;color:#111;}
+.notice-item p{font-size:.82rem;color:#666;}
+
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.gal-item{border-radius:6px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+.gal-item img{width:100%;height:130px;object-fit:cover;display:block;}
+.gal-item p{padding:8px;text-align:center;font-size:.82rem;font-weight:600;background:#fff;}
+
+.sidebar{display:flex;flex-direction:column;gap:16px;}
+.qlink-list{list-style:none;}
+.qlink-list li{padding:9px 0;border-bottom:1px solid #eee;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px;transition:color .2s;}
+.qlink-list li:hover{color:#ff9900;}
+.qlink-list li:last-child{border-bottom:none;}
+.qlink-list li .qi{color:#ff9900;width:16px;text-align:center;}
+
+/* SEMESTER */
+.sem-tabs{display:flex;flex-wrap:wrap;background:#f0f2f5;border-radius:6px;margin-bottom:20px;overflow:hidden;}
+.sem-tab{flex:1;padding:12px 16px;cursor:pointer;font-weight:600;text-align:center;font-size:.88rem;border:none;background:none;min-width:80px;transition:background .2s;}
+.sem-tab:hover{background:#ddd;}
+.sem-tab.active{background:#232f3e;color:#fff;}
+.sem-content{display:none;}
+.sem-content.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.sub-card{background:#f8f9fa;border-left:4px solid #ff9900;border-radius:4px;padding:16px;}
+.sub-card h4{font-size:.92rem;margin-bottom:6px;color:#131921;}
+.sub-card p{font-size:.82rem;color:#666;margin-bottom:10px;}
+.sub-meta{display:flex;justify-content:space-between;font-size:.78rem;color:#888;}
+.tag{padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;}
+.tag.th{background:#e8f4fd;color:#1565c0;}
+.tag.pr{background:#e8f5e9;color:#2e7d32;}
+
+/* PYQ */
+.pyq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+.pyq-card{background:#fff;border-radius:6px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-top:4px solid #ff9900;}
+.pyq-card h3{font-size:.95rem;margin-bottom:12px;color:#131921;}
+.pyq-card ul{list-style:none;margin-bottom:14px;}
+.pyq-card li{padding:7px 0;border-bottom:1px dashed #eee;font-size:.85rem;color:#444;display:flex;align-items:center;gap:8px;}
+.pyq-card li:last-child{border-bottom:none;}
+.dl-btn{background:#232f3e;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;font-weight:600;width:100%;font-size:.88rem;transition:background .2s;}
+.dl-btn:hover{background:#ff9900;color:#131921;}
+
+/* VIDEO */
+.vid-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.flt-btn{padding:6px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:.83rem;transition:all .2s;}
+.flt-btn.active,.flt-btn:hover{background:#232f3e;color:#fff;border-color:#232f3e;}
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+.vid-card{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .2s;}
+.vid-card:hover{transform:translateY(-3px);}
+.vid-thumb{position:relative;height:160px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.vid-thumb.c1{background:linear-gradient(135deg,#232f3e,#37475a);}
+.vid-thumb.c2{background:linear-gradient(135deg,#1a3c5e,#2d6a9f);}
+.vid-thumb.c3{background:linear-gradient(135deg,#2d4a1e,#4a7c30);}
+.vid-thumb.c4{background:linear-gradient(135deg,#5c1f1f,#a33333);}
+.play-btn{font-size:3rem;color:rgba(255,255,255,.85);}
+.vid-label{position:absolute;top:8px;left:8px;background:#ff9900;color:#131921;font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:3px;}
+.vid-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);color:#fff;padding:2px 7px;border-radius:3px;font-size:.75rem;}
+.vid-info{padding:14px;}
+.vid-info h3{font-size:.95rem;margin-bottom:5px;color:#131921;}
+.vid-info p{font-size:.82rem;color:#666;margin-bottom:6px;}
+.vid-meta{display:flex;justify-content:space-between;font-size:.75rem;color:#888;margin-top:6px;}
+
+/* HELP */
+.help-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-bottom:28px;}
+.help-card{background:#f8f9fa;border-radius:6px;padding:20px;border-top:3px solid #ff9900;}
+.help-card h3{font-size:.95rem;margin-bottom:12px;color:#131921;}
+.help-card ul{list-style:none;}
+.help-card li{padding:8px 0;border-bottom:1px dashed #ddd;font-size:.85rem;color:#444;cursor:pointer;display:flex;align-items:center;gap:8px;}
+.help-card li:hover{color:#ff9900;}
+.help-card li:last-child{border-bottom:none;}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px;}
+.con-card{text-align:center;padding:22px 14px;background:#f8f9fa;border-radius:6px;border-bottom:3px solid #ff9900;}
+.con-icon{font-size:2rem;margin-bottom:8px;}
+.con-card h4{font-size:.9rem;color:#131921;margin-bottom:4px;}
+.con-card p{font-size:.82rem;color:#666;}
+
+/* FOOTER — always at bottom */
+footer{background:#131921;color:#fff;padding:36px 16px 16px;margin-top:auto;width:100%;}
+.footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:26px;}
+.footer-col h3{color:#ff9900;margin-bottom:12px;font-size:1rem;}
+.footer-col p{color:#aaa;font-size:.85rem;line-height:1.7;}
+.footer-col ul{list-style:none;}
+.footer-col li{margin-bottom:7px;}
+.footer-col a{color:#ccc;text-decoration:none;font-size:.85rem;}
+.footer-col a:hover{color:#ff9900;}
+.social{display:flex;gap:10px;margin-top:12px;}
+.social a{color:#fff;background:#232f3e;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;text-decoration:none;transition:background .2s;}
+.social a:hover{background:#ff9900;color:#131921;}
+.footer-line{max-width:1300px;margin:22px auto 0;border:none;border-top:1px solid #37475a;}
+.copy{text-align:center;padding:14px 0 0;color:#888;font-size:.82rem;}
+.copy span{color:#ff9900;}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.modal-box{background:#fff;border-radius:10px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.25);position:relative;}
+.modal-header{background:#232f3e;color:#fff;padding:18px 22px;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
+.modal-header h2{font-size:1rem;font-weight:700;line-height:1.4;}
+.modal-close{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:0 4px;line-height:1;}
+.modal-close:hover{color:#ff9900;}
+.modal-body{padding:22px;}
+.m-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.75rem;font-weight:700;margin-bottom:14px;}
+.m-badge.th{background:#e8f4fd;color:#1565c0;}
+.m-badge.pr{background:#e8f5e9;color:#2e7d32;}
+.m-section{margin-bottom:18px;}
+.m-section h4{font-size:.88rem;font-weight:700;color:#131921;border-left:3px solid #ff9900;padding-left:10px;margin-bottom:10px;}
+.m-section ul{list-style:none;padding:0;}
+.m-section ul li{padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:.85rem;color:#444;display:flex;gap:8px;}
+.m-section ul li:last-child{border-bottom:none;}
+.m-section ul li::before{content:"▸";color:#ff9900;flex-shrink:0;}
+.m-section p{font-size:.85rem;color:#555;line-height:1.7;}
+.m-tip{background:#fffbea;border:1px solid #ffe082;border-radius:6px;padding:12px 14px;font-size:.83rem;color:#6d4c00;margin-top:6px;}
+.m-tip strong{display:block;margin-bottom:4px;color:#e65100;}
+
+/* PYQ question style */
+.pyq-q{background:#f8f9fa;border-radius:6px;padding:14px 16px;margin-bottom:12px;border-left:4px solid #ff9900;}
+.pyq-q .qno{font-size:.75rem;font-weight:700;color:#ff9900;margin-bottom:5px;}
+.pyq-q p{font-size:.86rem;color:#333;line-height:1.6;margin-bottom:6px;}
+.pyq-q .marks{font-size:.75rem;color:#888;font-weight:600;}
+.pyq-yr{display:inline-block;background:#232f3e;color:#fff;font-size:.72rem;padding:2px 9px;border-radius:3px;margin-bottom:14px;}
+
+/* sub-card clickable */
+.sub-card{cursor:pointer;transition:box-shadow .2s,transform .2s;}
+.sub-card:hover{box-shadow:0 4px 16px rgba(255,153,0,.25);transform:translateY(-2px);}
+.sub-card .open-hint{font-size:.75rem;color:#ff9900;margin-top:6px;font-weight:600;}
+
+/* pyq list item clickable */
+.pyq-card li{cursor:pointer;transition:color .2s;}
+.pyq-card li:hover{color:#ff9900;}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nav-top">
+    <div class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text">P<span>G</span>D<span>C</span>A <span>S</span>tudy <span>H</span>ub</div>
+    </div>
+    <div class="search-box">
+      <select class="search-select">
+        <option>All</option>
+        <option>Notices</option>
+        <option>PYQ Papers</option>
+        <option>Videos</option>
+      </select>
+      <input type="text" class="search-input" placeholder="Search materials, papers, videos...">
+      <button class="search-btn">🔍</button>
+    </div>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-main" id="navMain">
+    <ul class="nav-menu" id="navMenu">
+      <li class="nav-item active" data-target="home">🏠 HOME</li>
+      <li class="nav-item" data-target="semester">📚 ALL SEMESTER</li>
+      <li class="nav-item" data-target="pyq">📄 PYQ PQPERS</li>
+      <li class="nav-item" data-target="video">🎥 VIDEO LECTURE</li>
+      <li class="nav-item" data-target="help">❓ HELP</li>
+    </ul>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- HOME -->
+  <div class="section active" id="section-home">
+    <div class="ticker">
+      <span class="ticker-label">📢 NOTICE</span>
+      <span class="ticker-text">Exam Form last date: 15 Jan 2026 &nbsp;|&nbsp; Practical Exams from 20 Jan 2026 &nbsp;|&nbsp; Sem 3 Result Declared &nbsp;|&nbsp; New PYQ Papers uploaded for Sem 4 &nbsp;|&nbsp; College closed 26 Jan 2026 – Republic Day</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-icon">📄</div><div><h3>120+</h3><p>PYQ Papers</p></div></div>
+      <div class="stat"><div class="stat-icon">🎥</div><div><h3>80+</h3><p>Video Lectures</p></div></div>
+      <div class="stat"><div class="stat-icon">📚</div><div><h3>4</h3><p>Semesters</p></div></div>
+      <div class="stat"><div class="stat-icon">👨‍🎓</div><div><h3>500+</h3><p>Students</p></div></div>
+    </div>
+
+    <div class="home-grid">
+      <div>
+        <div class="card">
+          <div class="sec-title">📢 Notice Board</div>
+          <ul class="notice-list">
+            <li class="notice-item"><span class="badge new">NEW</span><div><h4>Exam Form Submission – Sep 2025</h4><p>Students must submit exam forms before 15 Sep 2025. Late fee applicable after due date.</p></div></li>
+            <li class="notice-item"><span class="badge exam">EXAM</span><div><h4>Practical Examination Schedule Released</h4><p>Practical exams for 3 semesters begin from 20 Nov 2025. Check detailed schedule.</p></div></li>
+            <li class="notice-item"><span class="badge gen">RESULT</span><div><h4>Semester 3 Result Declared</h4><p>Results for Sem 3 (June–Nov 2026) declared. Login to university portal to check.</p></div></li>
+            <li class="notice-item"><span class="badge gen">HOLIDAY</span><div><h4>Republic Day – College Closed 26 Jan</h4><p>College closed on 26 January 2026. Classes resume on 27 Jan 2026.</p></div></li>
+            <li class="notice-item"><span class="badge new">NEW</span><div><h4>PYQ Papers Uploaded – Semester 3</h4><p>All previous year papers for Sem 3 uploaded. Download from PYQ section.</p></div></li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="sec-title">🖼️ College Gallery</div>
+          <div class="gallery">
+            <div class="gal-item"><img src="https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=130&fit=crop" alt="Campus"><p>College Campus</p></div>
+            <div class="gal-item"><img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=130&fit=crop" alt="Lab"><p>Computer Lab</p></div>
+            <div class="gal-item"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=130&fit=crop" alt="Hall"><p>Seminar Hall</p></div>
+            <div class="gal-item"><img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=130&fit=crop" alt="Class"><p>Classroom</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="card">
+          <div class="sec-title">⚡ Quick Links</div>
+          <ul class="qlink-list">
+            <li onclick="goTo('semester')"><span class="qi">📖</span> Semester 1 Subjects</li>
+            <li onclick="goTo('semester')"><span class="qi">📖</span> Semester 2 Subjects</li>
+            <li onclick="goTo('pyq')"><span class="qi">📄</span> Download PYQ Papers</li>
+            <li onclick="goTo('video')"><span class="qi">▶️</span> Watch Video Lectures</li>
+            <li onclick="goTo('help')"><span class="qi">❓</span> Help & Support</li>
+            <li><span class="qi">🌐</span> GPL Portal</li>
+            <li><span class="qi">📅</span> Academic Calendar</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="sec-title">📅 Important Dates</div>
+          <ul class="qlink-list">
+            <li><span class="qi">🔴</span> Exam Form : <strong style="margin-left:4px">15 Oct 2025</strong></li>
+            <li><span class="qi">🟠</span> Practical Exam : <strong style="margin-left:4px">20 Nov 2025</strong></li>
+            <li><span class="qi">🟢</span> Sem 4 Theory : <strong style="margin-left:4px">1 Jan 2026</strong></li>
+            <li><span class="qi">🔵</span> Fee Payment : <strong style="margin-left:4px">31 Jan 2026</strong></li>
+            <li><span class="qi">⚪</span> Result Sem 3 : <strong style="margin-left:4px"> 10 Jan 2026</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL SEMESTER -->
+  <div class="section" id="section-semester">
+    <div class="card">
+      <div class="sec-title">📚 All Semesters – Subjects & Syllabus</div>
+      <div class="sem-tabs">
+        <button class="sem-tab active" data-sem="s1">Semester 1</button>
+        <button class="sem-tab" data-sem="s2">Semester 2</button>
+        <button class="sem-tab" data-sem="s3">Semester 3</button>
+        <button class="sem-tab" data-sem="s4">Semester 4</button>
+      </div>
+
+      <div class="sem-content active" id="s1">
+        <div class="sub-card" onclick="openSubject('s1_fc')"><h4>💻 Fundamentals of Computers</h4><p>Hardware, software, OS basics, MS Office applications, computer history.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s1_py')"><h4>💾 Programming in Python</h4><p> Python language basics, control structures, arrays, functions, pointers, file handling.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s1_ds')"><h4>🗂️ Data Structures</h4><p>Arrays, linked lists, stacks, queues, trees, graphs, searching & sorting.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s1_db')"><h4>🗄️ DBMS Basics</h4><p>Database concepts, ER model, relational model, SQL, normalization.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s1_lab')"><h4>🧪 DSUP Lab Practical</h4><p>Programming exercises in DSUP covering all theory topics with lab assignments.</p><div class="sub-meta"><span class="tag pr">Practical</span><span>2 Credits</span></div><div class="open-hint">👆 Click to view lab exercises</div></div>
+        <div class="sub-card" onclick="openSubject('s1_web')"><h4>🌐 Internet & Web Basics</h4><p>Internet technologies, HTML, web browsers, email, cybersecurity basics.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+      </div>
+
+      <div class="sem-content" id="s2">
+        <div class="sub-card" onclick="openSubject('s2_oop')"><h4>💻 OOP with Python</h4><p>Classes, objects, inheritance, polymorphism, encapsulation, templates, STL.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s2_cn')"><h4>🌐 Computer Networks</h4><p>OSI model, TCP/IP, LAN, WAN, routing protocols, network security.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s2_db')"><h4>🗄️ Advanced DBMS & SQL</h4><p>Advanced SQL, stored procedures, triggers, transactions, PL/SQL.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s2_os')"><h4>🖥️ Operating Systems</h4><p>Process management, memory management, file systems, CPU scheduling.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s2_lab')"><h4>🧪 Python Lab Practical</h4><p>OOP programming exercises in Python with mini-project on bank/student management.</p><div class="sub-meta"><span class="tag pr">Practical</span><span>2 Credits</span></div><div class="open-hint">👆 Click to view lab exercises</div></div>
+        <div class="sub-card" onclick="openSubject('s2_dm')"><h4>📐 Discrete Mathematics</h4><p>Sets, relations, logic, graph theory, combinatorics, Boolean algebra.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+      </div>
+
+      <div class="sem-content" id="s3">
+        <div class="sub-card" onclick="openSubject('s3_java')"><h4>☕ Java Programming</h4><p>Core Java, OOP, exception handling, collections, multithreading, JDBC.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s3_web')"><h4>🌐 Web Technology</h4><p>HTML5, CSS3, JavaScript, PHP, form handling, session management, MySQL.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s3_sec')"><h4>🔒 Information Security</h4><p>Cryptography, encryption, digital signatures, firewalls, cyber threats.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s3_se')"><h4>🧠 Software Engineering</h4><p>SDLC models, requirement analysis, design patterns, testing, UML.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s3_lab')"><h4>🧪 Java & Web Lab</h4><p>Practical exercises using Java and web technologies. Mini web app project.</p><div class="sub-meta"><span class="tag pr">Practical</span><span>2 Credits</span></div><div class="open-hint">👆 Click to view lab exercises</div></div>
+        <div class="sub-card" onclick="openSubject('s3_ec')"><h4>📊 E-Commerce</h4><p>Online business models, payment gateways, digital marketing, B2B, B2C.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+      </div>
+
+      <div class="sem-content" id="s4">
+        <div class="sub-card" onclick="openSubject('s4_ai')"><h4>🤖 Artificial Intelligence</h4><p>AI concepts, search algorithms, knowledge representation, expert systems, ML intro.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s4_cc')"><h4>☁️ Cloud Computing</h4><p>Cloud models (IaaS/PaaS/SaaS), virtualization, AWS/Azure basics, deployment.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s4_mob')"><h4>📱 Mobile App Development</h4><p>Android basics, Android Studio, UI design, Activities, Intents, SQLite.</p><div class="sub-meta"><span class="tag th">Theory</span><span>4 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s4_proj')"><h4>🏗️ Major Project</h4><p>Full-stack application covering frontend, backend, database, and deployment.</p><div class="sub-meta"><span class="tag pr">Practical</span><span>6 Credits</span></div><div class="open-hint">👆 Click to view project guidelines</div></div>
+        <div class="sub-card" onclick="openSubject('s4_ds')"><h4>📈 Data Science Basics</h4><p>Python for data, NumPy, Pandas, Matplotlib, data cleaning, visualization.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+        <div class="sub-card" onclick="openSubject('s4_pm')"><h4>💼 IT Project Management</h4><p>Agile, Scrum, project planning, cost estimation, risk management.</p><div class="sub-meta"><span class="tag th">Theory</span><span>3 Credits</span></div><div class="open-hint">👆 Click to view syllabus & notes</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PYQ -->
+  <div class="section" id="section-pyq">
+    <div class="card">
+      <div class="sec-title">📄 Previous Year Question Papers</div>
+      <div class="pyq-grid">
+        <div class="pyq-card"><h3>📗 Semester 1 Papers</h3><ul>
+          <li onclick="openPYQ('s1_fc_23')">📄 Fundamentals of Computers – 2023</li>
+          <li onclick="openPYQ('s1_py_23')">📄 Programming in Python – 2023</li>
+          <li onclick="openPYQ('s1_ds_23')">📄 Data Structures – 2023</li>
+          <li onclick="openPYQ('s1_db_23')">📄 DBMS Basics – 2023</li>
+          <li onclick="openPYQ('s1_web_23')">📄 Internet & Web Basics – 2023</li>
+          <li onclick="openPYQ('s1_all_22')">📄 All Subjects – 2022 Set</li>
+        </ul><button class="dl-btn">⬇️ Download Sem 1 Papers</button></div>
+
+        <div class="pyq-card"><h3>📘 Semester 2 Papers</h3><ul>
+          <li onclick="openPYQ('s2_oop_23')">📄 OOP with Python – 2023</li>
+          <li onclick="openPYQ('s2_cn_23')">📄 Computer Networks – 2023</li>
+          <li onclick="openPYQ('s2_db_23')">📄 Advanced DBMS – 2023</li>
+          <li onclick="openPYQ('s2_os_23')">📄 Operating Systems – 2023</li>
+          <li onclick="openPYQ('s2_dm_23')">📄 Discrete Mathematics – 2023</li>
+          <li onclick="openPYQ('s2_all_22')">📄 All Subjects – 2022 Set</li>
+        </ul><button class="dl-btn">⬇️ Download Sem 2 Papers</button></div>
+
+        <div class="pyq-card"><h3>📙 Semester 3 Papers</h3><ul>
+          <li onclick="openPYQ('s3_java_23')">📄 Java Programming – 2023</li>
+          <li onclick="openPYQ('s3_web_23')">📄 Web Technology – 2023</li>
+          <li onclick="openPYQ('s3_sec_23')">📄 Information Security – 2023</li>
+          <li onclick="openPYQ('s3_se_23')">📄 Software Engineering – 2023</li>
+          <li onclick="openPYQ('s3_ec_23')">📄 E-Commerce – 2023</li>
+          <li onclick="openPYQ('s3_all_22')">📄 All Subjects – 2022 Set</li>
+        </ul><button class="dl-btn">⬇️ Download Sem 3 Papers</button></div>
+
+        <div class="pyq-card"><h3>📕 Semester 4 Papers</h3><ul>
+          <li onclick="openPYQ('s4_ai_23')">📄 Artificial Intelligence – 2023</li>
+          <li onclick="openPYQ('s4_cc_23')">📄 Cloud Computing – 2023</li>
+          <li onclick="openPYQ('s4_mob_23')">📄 Mobile App Development – 2023</li>
+          <li onclick="openPYQ('s4_ds_23')">📄 Data Science Basics – 2023</li>
+          <li onclick="openPYQ('s4_pm_23')">📄 IT Project Management – 2023</li>
+          <li onclick="openPYQ('s4_all_22')">📄 All Subjects – 2022 Set</li>
+        </ul><button class="dl-btn">⬇️ Download Sem 4 Papers</button></div>
+
+        <div class="pyq-card"><h3>🗃️ 2021–2022 Archive</h3><ul>
+          <li onclick="openPYQ('s1_all_21')">📄 All Sem 1 Papers – 2021</li>
+          <li onclick="openPYQ('s2_all_21')">📄 All Sem 2 Papers – 2021</li>
+          <li onclick="openPYQ('s3_all_22')">📄 All Sem 3 Papers – 2022</li>
+          <li onclick="openPYQ('s4_all_22')">📄 All Sem 4 Papers – 2022</li>
+        </ul><button class="dl-btn">⬇️ Download Archive Bundle</button></div>
+
+        <div class="pyq-card"><h3>⭐ Model / Sample Papers</h3><ul>
+          <li onclick="openPYQ('model_c')">📄 Model Paper – Python</li>
+          <li onclick="openPYQ('model_db')">📄 Model Paper – DBMS</li>
+          <li onclick="openPYQ('model_java')">📄 Model Paper – Java</li>
+          <li onclick="openPYQ('model_web')">📄 Model Paper – Web Technology</li>
+        </ul><button class="dl-btn">⬇️ Download Model Papers</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO LECTURES -->
+  <div class="section" id="section-video">
+    <div class="card">
+      <div class="sec-title">🎥 Video Lectures</div>
+      <div class="vid-filter">
+        <button class="flt-btn active">All</button>
+        <button class="flt-btn">Semester 1</button>
+        <button class="flt-btn">Semester 2</button>
+        <button class="flt-btn">Semester 3</button>
+        <button class="flt-btn">Semester 4</button>
+      </div>
+      <div class="vid-grid">
+        <div class="vid-card"><div class="vid-thumb c1"><span class="vid-label">Sem 1</span><div class="play-btn">▶</div><span class="vid-dur">45:20</span></div><div class="vid-info"><h3>C Programming – Pointers & Memory</h3><p>Deep dive into pointers, dynamic memory allocation in C.</p><div class="vid-meta"><span>Prof. Sharma</span><span>👁 1.2k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c1"><span class="vid-label">Sem 1</span><div class="play-btn">▶</div><span class="vid-dur">38:45</span></div><div class="vid-info"><h3>Data Structures – Linked List</h3><p>Singly linked list: insert, delete, traverse with C code.</p><div class="vid-meta"><span>Prof. Verma</span><span>👁 980 views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c2"><span class="vid-label">Sem 2</span><div class="play-btn">▶</div><span class="vid-dur">52:10</span></div><div class="vid-info"><h3>OOP in C++ – Inheritance</h3><p>Single, multiple, multilevel inheritance with programs.</p><div class="vid-meta"><span>Prof. Gupta</span><span>👁 1.5k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c2"><span class="vid-label">Sem 2</span><div class="play-btn">▶</div><span class="vid-dur">41:30</span></div><div class="vid-info"><h3>DBMS – SQL Joins Explained</h3><p>INNER, LEFT, RIGHT, FULL OUTER joins with examples.</p><div class="vid-meta"><span>Prof. Singh</span><span>👁 2.1k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c3"><span class="vid-label">Sem 3</span><div class="play-btn">▶</div><span class="vid-dur">60:00</span></div><div class="vid-info"><h3>Java – Collections Framework</h3><p>ArrayList, HashMap, HashSet, Iterator with complete programs.</p><div class="vid-meta"><span>Prof. Kumar</span><span>👁 3.4k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c3"><span class="vid-label">Sem 3</span><div class="play-btn">▶</div><span class="vid-dur">55:15</span></div><div class="vid-info"><h3>Web Technology – PHP & MySQL</h3><p>Complete CRUD app using PHP and MySQL with login system.</p><div class="vid-meta"><span>Prof. Tiwari</span><span>👁 2.8k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c4"><span class="vid-label">Sem 4</span><div class="play-btn">▶</div><span class="vid-dur">48:00</span></div><div class="vid-info"><h3>AI – Search Algorithms</h3><p>BFS, DFS, A* algorithm with Python code and examples.</p><div class="vid-meta"><span>Prof. Sharma</span><span>👁 1.9k views</span></div></div></div>
+        <div class="vid-card"><div class="vid-thumb c4"><span class="vid-label">Sem 4</span><div class="play-btn">▶</div><span class="vid-dur">44:50</span></div><div class="vid-info"><h3>Android Dev – Building First App</h3><p>Setup Android Studio, create UI, handle clicks, run on emulator.</p><div class="vid-meta"><span>Prof. Mishra</span><span>👁 4.1k views</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP -->
+  <div class="section" id="section-help">
+    <div class="card">
+      <div class="sec-title">❓ Help & Support</div>
+      <div class="help-grid">
+        <div class="help-card"><h3>📚 Study Resources</h3><ul><li>➤ How to download PYQ papers</li><li>➤ How to access video lectures</li><li>➤ Finding subject-wise notes</li><li>➤ Using the search feature</li><li>➤ Bookmarking study materials</li></ul></div>
+        <div class="help-card"><h3>📄 Exam & Result Help</h3><ul><li>➤ How to fill exam form online</li><li>➤ Checking exam schedule</li><li>➤ Downloading admit card</li><li>➤ Checking result on portal</li><li>➤ Re-checking / revaluation process</li></ul></div>
+        <div class="help-card"><h3>👨‍🎓 Student Services</h3><ul><li>➤ Fee payment procedure</li><li>➤ Scholarship application process</li><li>➤ Library membership & books</li><li>➤ ID card & bonafide certificate</li><li>➤ Transfer certificate process</li></ul></div>
+        <div class="help-card"><h3>💻 Technical Support</h3><ul><li>➤ Portal login issues</li><li>➤ Video not loading / buffering</li><li>➤ PDF download problems</li><li>➤ Password reset help</li><li>➤ Report broken links</li></ul></div>
+      </div>
+      <div class="sec-title">📞 Contact Us</div>
+      <div class="contact-grid">
+        <div class="con-card"><div class="con-icon">📞</div><h4>Phone</h4><p>+91-63862215##</p><p style="font-size:.75rem;color:#aaa;margin-top:4px">Mon–Sat: 9 AM – 5 PM</p></div>
+        <div class="con-card"><div class="con-icon">📧</div><h4>Email</h4><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c6aea3aab686b6a1a2a5a7aeb3a4e8a3a2b3e8afa8">[email&#160;protected]</a></p><p style="font-size:.75rem;color:#aaa;margin-top:4px">Reply within 24 hours</p></div>
+        <div class="con-card"><div class="con-icon">📍</div><h4>Address</h4><p>PGDCA Dept, Block B</p><p style="font-size:.75rem;color:#aaa;margin-top:4px">Kanpur, Uttar Pradesh</p></div>
+        <div class="con-card"><div class="con-icon">💬</div><h4>WhatsApp Group</h4><p>Join Student Group</p><p style="font-size:.75rem;color:#aaa;margin-top:4px">For quick announcements</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <h2 id="modalTitle">Title</h2>
+      <button class="modal-close" onclick="closeModalNow()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h3>🎓 PGDCA Study Hub</h3>
+      <p>Your complete digital learning companion for PGDCA. Access notes, PYQ papers, video lectures, and college notices — all in one place.</p>
+      <div class="social">
+        <a href="#">📘</a>
+        <a href="#">▶️</a>
+        <a href="#">💬</a>
+        <a href="#">✈️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h3>🔗 Quick Links</h3>
+      <ul>
+        <li><a href="#" onclick="goTo('home');return false;">🏠 Home</a></li>
+        <li><a href="#" onclick="goTo('semester');return false;">📚 All Semesters</a></li>
+        <li><a href="#" onclick="goTo('pyq');return false;">📄 PYQ Papers</a></li>
+        <li><a href="#" onclick="goTo('video');return false;">🎥 Video Lectures</a></li>
+        <li><a href="#" onclick="goTo('help');return false;">❓ Help & Support</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>📚 Semesters</h3>
+      <ul>
+        <li><a href="#" onclick="goTo('semester');return false;">▸ Semester 1 Subjects</a></li>
+        <li><a href="#" onclick="goTo('semester');return false;">▸ Semester 2 Subjects</a></li>
+        <li><a href="#" onclick="goTo('semester');return false;">▸ Semester 3 Subjects</a></li>
+        <li><a href="#" onclick="goTo('semester');return false;">▸ Semester 4 Subjects</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>🔗 Important Links</h3>
+      <ul>
+        <li><a href="#">🌐 GPL Portal</a></li>
+        <li><a href="#">📅 Academic Calendar</a></li>
+        <li><a href="#">🪪 Admit Card</a></li>
+        <li><a href="#">⭐ Results</a></li>
+        <li><a href="#">💰 Fee Payment</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="footer-line">
+  <div class="copy">
+    <p>© 2026 <span>PGDCA Study Hub</span>. All rights reserved. | Made with ❤️ for PGDCA Students | Kanpur, UP</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ---- MAIN NAVIGATION ----
+function goTo(target) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var sec = document.getElementById('section-' + target);
+  if(sec) sec.classList.add('active');
+  var nav = document.querySelector('.nav-item[data-target="' + target + '"]');
+  if(nav) nav.classList.add('active');
+  // Close mobile menu after click
+  document.getElementById('navMain').classList.remove('open');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.querySelectorAll('.nav-item').forEach(function(item){
+  item.addEventListener('click', function(){ goTo(this.dataset.target); });
+});
+
+// ---- HAMBURGER MENU ----
+document.getElementById('hamburgerBtn').addEventListener('click', function(){
+  this.classList.toggle('open');
+  document.getElementById('navMain').classList.toggle('open');
+});
+
+// ---- SEMESTER TABS ----
+document.querySelectorAll('.sem-tab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.sem-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.sem-content').forEach(function(c){ c.classList.remove('active'); });
+    tab.classList.add('active');
+    var content = document.getElementById(tab.dataset.sem);
+    if(content) content.classList.add('active');
+  });
+});
+
+// ---- VIDEO FILTER BUTTONS ----
+document.querySelectorAll('.flt-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.flt-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  });
+});
+
+// ========== MODAL SYSTEM ==========
+var subjectData = {
+  // SEMESTER 1
+  s1_fc:{title:'💻 Fundamentals of Computers – Sem 1',type:'th',credits:4,
+    desc:'This subject covers the basics of computer hardware, software, and everyday applications. It is the foundation for all IT subjects.',
+    topics:['History of Computers: Generations 1st to 5th','Input/Output Devices – Keyboard, Mouse, Monitor, Printer','CPU Components: ALU, CU, Registers','Memory Types: RAM, ROM, Cache, Secondary Storage','Operating System Basics: Windows, Linux','MS Office: Word, Excel, PowerPoint, Access','Number Systems: Binary, Octal, Decimal, Hexadecimal','Internet Basics: Browser, Email, Search Engine','Networking Fundamentals: LAN, WAN, MAN'],
+    note:'Exam mein Number Systems ke conversion questions zaroor aate hain. MS Office ke practical questions bhi important hain.',
+    imp:'Number System Conversion, OS Functions, Input/Output Devices types, MS Excel formulas'},
+  s1_py:{title:'💾 Programming in Python – Sem 1',type:'th',credits:4,
+    desc:'Python programming language ke fundamentals, control structures, functions, aur file handling cover hote hain.',
+    topics:['Python Installation & IDLE, print(), input()','Variables, Data Types: int, float, str, bool, list, tuple, dict','Operators: Arithmetic, Relational, Logical, Bitwise','Control Structures: if-elif-else, while, for loop','Functions: def, return, *args, **kwargs, lambda','List & Dictionary Methods','File Handling: open(), read(), write(), close()','Exception Handling: try-except-finally','Modules: math, random, os, datetime'],
+    note:'Python syntax case-sensitive hai. Indentation mandatory hai – yahi sabse common error hai beginners mein.',
+    imp:'List operations, Function definition, File handling modes, Exception types'},
+  s1_ds:{title:'🗂️ Data Structures – Sem 1',type:'th',credits:4,
+    desc:'Data ko organize aur store karne ke tarike. Ye subject placement interviews ke liye bhi bahut important hai.',
+    topics:['Arrays: 1D, 2D, operations (insert, delete, search)','Linked List: Singly, Doubly, Circular','Stack: PUSH, POP, PEEK, applications (expression evaluation)','Queue: Enqueue, Dequeue, Circular Queue, Priority Queue','Trees: Binary Tree, BST, Tree Traversal (Inorder, Preorder, Postorder)','Graphs: BFS, DFS, Adjacency Matrix/List','Sorting: Bubble, Selection, Insertion, Merge, Quick Sort','Searching: Linear Search, Binary Search','Hashing: Hash Function, Collision, Chaining'],
+    note:'Time Complexity (Big-O Notation) yaad karo: O(1), O(log n), O(n), O(n²). Ye exams mein zaroor poochha jaata hai.',
+    imp:'Stack & Queue operations, Tree Traversals, Sorting algorithms, Binary Search'},
+  s1_db:{title:'🗄️ DBMS Basics – Sem 1',type:'th',credits:3,
+    desc:'Database management systems ke fundamentals – data kaise store aur retrieve hota hai structured way mein.',
+    topics:['DBMS vs File System – advantages','Database Architecture: 1-tier, 2-tier, 3-tier','ER Model: Entity, Attribute, Relationship, Keys','Relational Model: Tables, Tuples, Domains','SQL Basics: CREATE, INSERT, SELECT, UPDATE, DELETE','WHERE clause, ORDER BY, GROUP BY, HAVING','Joins: INNER, LEFT, RIGHT, FULL OUTER JOIN','Normalization: 1NF, 2NF, 3NF, BCNF','Keys: Primary, Foreign, Candidate, Super Key'],
+    note:'Normalization ka concept ek diagram se samjho. SQL queries practice karo – SELECT ke saath WHERE, JOIN, GROUP BY combinations.',
+    imp:'ER Diagram, Normalization forms, SQL SELECT with JOIN, Primary vs Foreign Key'},
+  s1_lab:{title:'🧪 DSUP Lab Practical – Sem 1',type:'pr',credits:2,
+    desc:'Theory subjects ke programs practically implement karna – Python programming aur Data Structures ke exercises.',
+    topics:['Python: Calculator program, Grade calculator','Python: Pattern printing (star, number pyramids)','Python: List sorting without built-in sort','Python: File read/write programs','DS: Stack implementation using list','DS: Queue implementation using list','DS: Linked List node creation & traversal','DS: Binary Search implementation','DS: Bubble Sort & Selection Sort program'],
+    note:'Lab exam mein program likhne ke saath output bhi dikhana hoga. Comment add karo code mein – marks milte hain.',
+    imp:'Stack push/pop, Queue enqueue/dequeue, File handling, Sorting programs'},
+  s1_web:{title:'🌐 Internet & Web Basics – Sem 1',type:'th',credits:3,
+    desc:'Internet technologies, web browsers, HTML basics, email, aur cybersecurity ke fundamentals.',
+    topics:['Internet History & Evolution, WWW vs Internet','IP Address, Domain Name, DNS, URL structure','Web Browsers: Chrome, Firefox, Edge – features','HTML Basics: Tags, Attributes, Document Structure','Forms, Tables, Images, Hyperlinks in HTML','Email: SMTP, POP3, IMAP protocols','Search Engines: How Google works (crawling, indexing)','Cybersecurity Basics: Virus, Worm, Trojan, Phishing','Firewall, Antivirus, SSL/HTTPS'],
+    note:'HTML tags yaad karo: headings (h1-h6), paragraph (p), anchor (a), image (img), table (table/tr/td).',
+    imp:'HTTP vs HTTPS, DNS working, HTML form tags, Email protocols, Cyberthreats types'},
+
+  // SEMESTER 2
+  s2_oop:{title:'💻 OOP with Python – Sem 2',type:'th',credits:4,
+    desc:'Object-Oriented Programming concepts Python mein implement karna – real world problems ko class & object se solve karna.',
+    topics:['OOP Concepts: Class, Object, Encapsulation, Abstraction','Constructor: __init__(), self keyword','Inheritance: Single, Multiple, Multilevel, Hierarchical','Method Overriding, super() function','Polymorphism: Duck Typing, Method Overloading concept','Encapsulation: Private (__var), Protected (_var)','Abstract Classes: abc module','Exception Handling in OOP','File I/O with classes, Operator Overloading'],
+    note:'Class aur Object ka farak clearly samjho. __init__ constructor automatically call hota hai object banate waqt.',
+    imp:'Inheritance types, Method Overriding, __init__ constructor, Polymorphism concept'},
+  s2_cn:{title:'🌐 Computer Networks – Sem 2',type:'th',credits:4,
+    desc:'Computer networks kaise kaam karte hain – OSI model, TCP/IP, protocols aur network security.',
+    topics:['Network Types: LAN, MAN, WAN, PAN','Network Topologies: Bus, Star, Ring, Mesh, Tree','OSI Model: 7 Layers (Physical → Application)','TCP/IP Model: 4 Layers, comparison with OSI','IP Addressing: IPv4, IPv6, Subnetting basics','Protocols: HTTP, FTP, SMTP, DNS, DHCP, ARP','Routing: Static vs Dynamic, RIP, OSPF','Network Devices: Hub, Switch, Router, Gateway, Repeater','Network Security: Firewall, VPN, Encryption'],
+    note:'OSI model ke 7 layers yaad karne ki trick: "Please Do Not Throw Sausage Pizza Away" (Physical, Data Link, Network, Transport, Session, Presentation, Application)',
+    imp:'OSI vs TCP/IP layers, IP address classes, Network devices functions, Protocols list'},
+  s2_db:{title:'🗄️ Advanced DBMS & SQL – Sem 2',type:'th',credits:4,
+    desc:'Advanced SQL concepts – stored procedures, triggers, transactions, aur database optimization.',
+    topics:['Advanced SQL: Subqueries, Correlated Subqueries','Aggregate Functions: COUNT, SUM, AVG, MIN, MAX','Views: CREATE VIEW, UPDATE VIEW, DROP VIEW','Stored Procedures: CREATE PROCEDURE, parameters','Triggers: BEFORE/AFTER INSERT/UPDATE/DELETE','Transactions: BEGIN, COMMIT, ROLLBACK, SAVEPOINT','ACID Properties: Atomicity, Consistency, Isolation, Durability','Indexing: B-Tree Index, performance improvement','Concurrency Control: Locks, Deadlock, Two-Phase Locking','PL/SQL Basics: Variables, Loops, Cursors'],
+    note:'ACID properties exam mein definition ke saath example bhi poochha jaata hai. Trigger aur Stored Procedure ka farak yaad karo.',
+    imp:'ACID properties, Trigger syntax, Stored Procedure, Transaction commands'},
+  s2_os:{title:'🖥️ Operating Systems – Sem 2',type:'th',credits:4,
+    desc:'Operating System ke kaam – process management, memory management, file systems, aur CPU scheduling.',
+    topics:['OS Functions & Types: Batch, Time-Sharing, Real-Time, Distributed','Process Concepts: PCB, States (New, Ready, Running, Wait, Terminated)','CPU Scheduling: FCFS, SJF, Round Robin, Priority','Process Synchronization: Critical Section, Mutex, Semaphore','Deadlock: Conditions, Prevention, Avoidance (Bankers Algorithm)','Memory Management: Paging, Segmentation, Virtual Memory','Page Replacement: FIFO, LRU, Optimal Algorithm','File System: FAT, NTFS, ext4, File Permissions','I/O Management, Disk Scheduling: FCFS, SSTF, SCAN'],
+    note:'CPU Scheduling algorithms ke Gantt chart banana practice karo – yahi exam mein aate hain. Deadlock ke 4 conditions: Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.',
+    imp:'CPU Scheduling algorithms, Deadlock conditions, Paging vs Segmentation, Page Replacement'},
+  s2_lab:{title:'🧪 Python Lab Practical – Sem 2',type:'pr',credits:2,
+    desc:'OOP concepts ko Python mein practically implement karna – class-based projects banana.',
+    topics:['Class & Object: Student/Employee record system','Constructor & Destructor programs','Inheritance: Shape class → Circle, Rectangle child classes','Method Overriding examples','Polymorphism: same method different behavior demo','Bank Account Management System using OOP','Exception handling in class methods','File operations using class','Mini Project: Student Management System or Bank System'],
+    note:'Lab exam mein class-based program banana aata hai. __init__, self, inheritance ke programs zaroor practice karo.',
+    imp:'Student Management System, Bank Account OOP, Inheritance program, Exception in class'},
+  /* s2_dm entry removed */
+
+  // SEMESTER 3
+  s3_java:{title:'☕ Java Programming – Sem 3',type:'th',credits:4,
+    desc:'Core Java – OOP se lekar Collections, Multithreading, aur JDBC tak. Placement ke liye most important subject.',
+    topics:['Java Basics: JDK, JVM, JRE, Compilation & Execution','Data Types, Variables, Operators, Type Casting','OOP in Java: Class, Object, Constructor, this keyword','Inheritance: extends, super, Method Overriding, final','Interfaces & Abstract Classes','Exception Handling: try-catch-finally, throws, throw, Custom Exceptions','Collections Framework: ArrayList, LinkedList, HashMap, HashSet, TreeMap','Generics: Generic classes & methods','Multithreading: Thread class, Runnable, Synchronization','JDBC: Connection, Statement, ResultSet, CRUD operations','Java 8 Features: Lambda, Stream API, Optional'],
+    note:'Java mein sab kuch class ke andar hota hai. public static void main(String[] args) – yahi entry point hai. Collections aur Exception handling exam mein zaroor aate hain.',
+    imp:'Collections framework, Exception hierarchy, JDBC steps, Multithreading, Interface vs Abstract'},
+  s3_web:{title:'🌐 Web Technology – Sem 3',type:'th',credits:4,
+    desc:'Full web development stack – HTML5, CSS3, JavaScript, aur PHP ke saath MySQL backend.',
+    topics:['HTML5: Semantic tags, Forms, Input types, Audio/Video','CSS3: Selectors, Box Model, Flexbox, Grid, Animations','JavaScript: DOM manipulation, Events, Functions, Arrays','JavaScript: Fetch API, JSON, Promises basics','PHP Basics: Variables, Arrays, Functions, Forms','PHP: GET vs POST methods, Form Validation','Sessions & Cookies in PHP','MySQL with PHP: mysqli, PDO, CRUD operations','PHP OOP: Classes, Inheritance in PHP','REST API basics, JSON data exchange'],
+    note:'HTML → CSS → JS → PHP – is order mein seekho. PHP mein form se data lena sabse common exam question hai.',
+    imp:'HTML forms, CSS Flexbox, JavaScript DOM, PHP form handling, PHP-MySQL CRUD'},
+  s3_sec:{title:'🔒 Information Security – Sem 3',type:'th',credits:3,
+    desc:'Digital world mein security – cryptography, encryption, firewalls, aur cyber threats ke against protection.',
+    topics:['Information Security Goals: CIA Triad (Confidentiality, Integrity, Availability)','Cryptography: Symmetric vs Asymmetric Encryption','Classical Ciphers: Caesar, Vigenere, Playfair','Modern Encryption: DES, 3DES, AES, RSA','Digital Signatures & Certificates, PKI','Hashing: MD5, SHA-1, SHA-256 – use cases','Firewalls: Packet Filter, Stateful, Application Layer','VPN: Types, Working, Use Cases','Cyber Threats: Virus, Worm, Trojan, Ransomware, Phishing, DoS/DDoS','Ethical Hacking Phases, Penetration Testing overview'],
+    note:'CIA Triad sabse basic concept hai – Confidentiality, Integrity, Availability. Symmetric vs Asymmetric ka difference clearly yaad karo.',
+    imp:'CIA Triad, Symmetric vs Asymmetric, RSA algorithm basics, Firewall types, Cyber attack types'},
+  s3_se:{title:'🧠 Software Engineering – Sem 3',type:'th',credits:4,
+    desc:'Software development process – planning se lekar testing aur delivery tak. Project management bhi cover hota hai.',
+    topics:['SDLC Phases: Planning, Analysis, Design, Implementation, Testing, Maintenance','SDLC Models: Waterfall, Prototype, Spiral, Agile','Requirement Analysis: Functional vs Non-Functional Requirements','SRS Document: Purpose, Scope, Definitions','Software Design: DFD (Data Flow Diagram), ERD, UML','UML Diagrams: Use Case, Class, Sequence, Activity','Software Testing: Unit, Integration, System, Acceptance Testing','Black Box vs White Box Testing, Test Cases','Software Metrics: LOC, Function Points, Cyclomatic Complexity','Software Maintenance Types: Corrective, Adaptive, Perfective, Preventive'],
+    note:'SDLC models ka comparison chart yaad karo. DFD ke levels (Context, Level 0, Level 1) aur UML diagrams draw karna practice karo.',
+    imp:'SDLC models comparison, DFD levels, UML Use Case diagram, Testing types, SRS components'},
+  s3_lab:{title:'🧪 Java & Web Lab – Sem 3',type:'pr',credits:2,
+    desc:'Java aur Web Technology ke practical programs – complete web application banana.',
+    topics:['Java: CRUD using JDBC – Student/Employee records','Java: Exception handling programs','Java: ArrayList, HashMap operations','Java: Thread creation & synchronization','HTML: Complete registration form','CSS: Responsive design using Flexbox/Grid','JavaScript: Form validation, DOM manipulation','PHP: Login system with session','PHP-MySQL: CRUD application (add/view/edit/delete)','Mini Project: Student Result Portal ya Library System'],
+    note:'Lab exam mein PHP-MySQL CRUD most common hai. Login system (session_start, $_SESSION) zaroor practice karo.',
+    imp:'PHP login system, PHP-MySQL CRUD, Java JDBC, JavaScript form validation'},
+  s3_ec:{title:'📊 E-Commerce – Sem 3',type:'th',credits:3,
+    desc:'Online business models, digital payments, aur e-commerce platforms ka study.',
+    topics:['E-Commerce Definition, Advantages, Disadvantages','Business Models: B2B, B2C, C2C, B2G examples','E-Commerce Infrastructure: Hardware, Software, Networks','Electronic Payment Systems: Credit Card, Debit Card, UPI, Net Banking','Digital Wallets: Paytm, PhonePe, Google Pay – working','Online Shopping Process: Cart, Checkout, Payment Gateway','Security in E-Commerce: SSL, SET (Secure Electronic Transaction)','Digital Marketing: SEO, SEM, Email Marketing, Social Media Marketing','M-Commerce: Mobile commerce, apps','EDI (Electronic Data Interchange), ERP basics'],
+    note:'India ke context mein UPI, Paytm, Flipkart, Amazon ke examples se questions aate hain. Payment gateway ka flow yaad karo.',
+    imp:'B2B vs B2C vs C2C, Payment gateways, SSL/SET security, Digital marketing types, UPI working'},
+
+  // SEMESTER 4
+  s4_ai:{title:'🤖 Artificial Intelligence – Sem 4',type:'th',credits:4,
+    desc:'AI concepts – machines ko intelligent banane ke techniques: search, knowledge, reasoning aur ML basics.',
+    topics:['AI Definition, History, Applications, Goals','Agents: Types (Simple Reflex, Goal-Based, Utility-Based, Learning)','Problem Solving: State Space, Problem Formulation','Uninformed Search: BFS, DFS, Depth-Limited, IDDFS','Informed Search: Greedy Best-First, A* Algorithm','Game Playing: Minimax, Alpha-Beta Pruning','Knowledge Representation: Propositional Logic, First-Order Logic','Expert Systems: Architecture, Knowledge Base, Inference Engine','Machine Learning: Supervised, Unsupervised, Reinforcement learning types','Natural Language Processing (NLP) basics'],
+    note:'A* algorithm ka f(n) = g(n) + h(n) yaad karo. Minimax aur Alpha-Beta Pruning game trees se samjho.',
+    imp:'BFS vs DFS comparison, A* algorithm, Minimax, Expert System architecture, ML types'},
+  s4_cc:{title:'☁️ Cloud Computing – Sem 4',type:'th',credits:4,
+    desc:'Cloud technology – IaaS, PaaS, SaaS models, virtualization, aur AWS/Azure basics.',
+    topics:['Cloud Definition, Characteristics: On-demand, Elasticity, Pay-per-use','Cloud Service Models: IaaS, PaaS, SaaS – examples','Cloud Deployment Models: Public, Private, Hybrid, Community','Virtualization: Hypervisor (Type 1 & 2), VM vs Container','AWS Basics: EC2, S3, RDS, Lambda – overview','Azure Basics: Virtual Machines, Blob Storage, Azure SQL','Cloud Security: Data encryption, Identity Management, IAM','Cloud Storage: Object, Block, File Storage','Microservices Architecture, Docker basics','SLA (Service Level Agreement), Cloud pricing models'],
+    note:'IaaS = Infrastructure (AWS EC2), PaaS = Platform (Heroku), SaaS = Software (Gmail, Zoom). Ye examples yaad karo.',
+    imp:'IaaS vs PaaS vs SaaS examples, Public vs Private vs Hybrid, Virtualization types, Docker basics'},
+  s4_mob:{title:'📱 Mobile App Development – Sem 4',type:'th',credits:4,
+    desc:'Android app development – Android Studio se lekar SQLite database integration tak.',
+    topics:['Android Architecture: Linux Kernel, Libraries, Runtime, Framework, Apps','Android Components: Activity, Service, BroadcastReceiver, ContentProvider','Android Studio Setup, Emulator Configuration','Layouts: LinearLayout, RelativeLayout, ConstraintLayout, RecyclerView','UI Widgets: TextView, EditText, Button, ImageView, Spinner, CheckBox','Intents: Explicit vs Implicit, Intent Extras, startActivity()','Activity Lifecycle: onCreate, onStart, onResume, onPause, onStop, onDestroy','Fragments: Fragment Lifecycle, Fragment Manager','SQLite Database: SQLiteOpenHelper, CRUD operations','Shared Preferences, AsyncTask / Coroutines basics','App Permissions: Manifest, Runtime permissions'],
+    note:'Activity Lifecycle diagram zaroor yaad karo – yahi most common question hai. onResume() → app visible + interactive. Intent se activities ke beech data pass karo.',
+    imp:'Activity Lifecycle methods, Explicit vs Implicit Intent, SQLite CRUD, RecyclerView, Layouts comparison'},
+  s4_proj:{title:'🏗️ Major Project – Sem 4',type:'pr',credits:6,
+    desc:'PGDCA ka final year project – ek complete working application jo frontend, backend aur database use kare.',
+    topics:['Project Planning: Topic selection, SRS document','Frontend: HTML5, CSS3, JavaScript / React.js','Backend: PHP / Java Spring Boot / Node.js','Database: MySQL / SQLite / MongoDB','User Authentication: Login, Registration, Sessions','CRUD Operations: Complete Create-Read-Update-Delete','Responsive Design: Mobile-friendly UI','Project Documentation: Synopsis, ER Diagram, DFD, Screenshots','Deployment: Localhost / GitHub Pages / Hostinger','Viva Voce Preparation: Project explanation, questions'],
+    note:'Project topic ideas: Library Management System, Student Result Portal, Hospital Management, BaazaarFind App, E-Commerce Store, Inventory System.',
+    imp:'SRS document, ER Diagram, Complete CRUD, Responsive design, Deployment, Documentation'},
+  s4_ds:{title:'📈 Data Science Basics – Sem 4',type:'th',credits:3,
+    desc:'Data Science ka introduction – Python libraries se data analyze aur visualize karna.',
+    topics:['Data Science Introduction, Applications, Data Types','NumPy: Arrays, Array Operations, Mathematical functions','Pandas: Series, DataFrame, read_csv, loc/iloc, dropna, fillna','Data Cleaning: Handling missing values, duplicates, outliers','Data Visualization: Matplotlib, Seaborn – Line, Bar, Pie, Scatter, Heatmap','Descriptive Statistics: Mean, Median, Mode, Standard Deviation','Correlation, Covariance analysis','Introduction to Machine Learning: Scikit-learn, train_test_split','Linear Regression basic implementation','Data preprocessing: StandardScaler, LabelEncoder'],
+    note:'Pandas operations practice karo: df.groupby(), df.merge(), df.describe(). Ye sab exam mein aate hain.',
+    imp:'NumPy array operations, Pandas DataFrame operations, Matplotlib charts, Correlation, Linear Regression'},
+  s4_pm:{title:'💼 IT Project Management – Sem 4',type:'th',credits:3,
+    desc:'IT projects ko plan, execute aur deliver karna – Agile, Scrum aur traditional project management.',
+    topics:['Project Management Introduction, PMBOK basics','Project Lifecycle: Initiation, Planning, Execution, Monitoring, Closing','WBS (Work Breakdown Structure)','Agile Manifesto, Agile Principles','Scrum Framework: Sprint, Daily Standup, Sprint Review, Retrospective','Scrum Roles: Product Owner, Scrum Master, Development Team','Kanban Board, Burndown Chart','Risk Management: Identification, Assessment, Mitigation','Cost Estimation Techniques: COCOMO, Function Point Analysis','Project Scheduling: Gantt Chart, CPM, PERT'],
+    note:'Agile vs Waterfall ka comparison yaad karo. Scrum ke ceremonies (Sprint Planning, Daily Standup, Review, Retrospective) aur roles clearly yaad karo.',
+    imp:'Agile vs Waterfall, Scrum roles & ceremonies, Gantt Chart, Risk types, COCOMO model'}
+};
+
+var pyqData = {
+  s1_fc_23:{title:'💻 Fundamentals of Computers – 2023 Paper',year:'2023',sem:'Semester 1',
+    questions:[
+      {q:'What is a computer? Explain the basic components of a computer system with a neat diagram.',marks:'10 Marks'},
+      {q:'Define the following: (i) RAM (ii) ROM (iii) Cache Memory (iv) Secondary Memory. Compare RAM and ROM.',marks:'8 Marks'},
+      {q:'Explain the different generations of computers with their characteristics and examples.',marks:'10 Marks'},
+      {q:'Convert the following: (i) (1101101)₂ to Decimal (ii) (255)₁₀ to Binary (iii) (A9F)₁₆ to Decimal (iv) (256)₁₀ to Hexadecimal',marks:'8 Marks'},
+      {q:'What is an Operating System? Explain its functions. List any four examples of OS.',marks:'6 Marks'},
+      {q:'Write short notes on: (i) Input/Output Devices (ii) MS Excel Formulas (iii) Types of Software',marks:'6 Marks'}
+    ]},
+  s1_py_23:{title:'💾 Programming in Python – 2023 Paper',year:'2023',sem:'Semester 1',
+    questions:[
+      {q:'What is Python? Explain its features and advantages over other programming languages.',marks:'8 Marks'},
+      {q:'Write a Python program to accept student name, roll no. and marks in 5 subjects, calculate total and percentage, and display result (Pass/Fail).',marks:'10 Marks'},
+      {q:'Explain list in Python. Write programs to: (i) Reverse a list (ii) Find largest element (iii) Remove duplicates',marks:'10 Marks'},
+      {q:'What are functions in Python? Write programs for: (i) Fibonacci series (ii) Factorial using recursion (iii) Check prime number',marks:'10 Marks'},
+      {q:'Explain file handling in Python. Write a program to read a file, count words, and write uppercase content to another file.',marks:'8 Marks'},
+      {q:'What is exception handling? Explain try, except, finally with an example of ZeroDivisionError and FileNotFoundError.',marks:'6 Marks'}
+    ]},
+  s1_ds_23:{title:'🗂️ Data Structures – 2023 Paper',year:'2023',sem:'Semester 1',
+    questions:[
+      {q:'What is a Data Structure? Classify data structures with examples. Differentiate between linear and non-linear data structures.',marks:'8 Marks'},
+      {q:'Implement a stack using arrays. Write algorithms for PUSH, POP, and PEEK operations. Show with an example how stack evaluates postfix expression.',marks:'10 Marks'},
+      {q:'Write algorithm and program for: (i) Insertion Sort (ii) Bubble Sort. Compare their time complexities.',marks:'10 Marks'},
+      {q:'Explain Binary Search Tree (BST). Insert 50, 30, 70, 20, 40, 60, 80 into BST and show Inorder, Preorder, Postorder traversals.',marks:'10 Marks'},
+      {q:'What is Linked List? Write C/Python program for singly linked list to insert at beginning, end, and delete a node.',marks:'10 Marks'},
+      {q:'Explain BFS and DFS with example. Write algorithm for BFS on a given graph.',marks:'8 Marks'}
+    ]},
+  s1_db_23:{title:'🗄️ DBMS Basics – 2023 Paper',year:'2023',sem:'Semester 1',
+    questions:[
+      {q:'What is DBMS? Explain advantages of DBMS over traditional file system. Give examples of popular DBMS.',marks:'8 Marks'},
+      {q:'Draw and explain ER diagram for a "Library Management System" showing entities, attributes and relationships.',marks:'10 Marks'},
+      {q:'Explain Normalization. Normalize the following relation to 3NF: Student(RollNo, Name, Subject, Teacher, Dept)',marks:'10 Marks'},
+      {q:'Write SQL queries: (i) Create STUDENT table (ii) Insert 3 records (iii) Display students with marks > 60 (iv) Display in descending order of marks (v) Count students per department',marks:'10 Marks'},
+      {q:'Explain INNER JOIN, LEFT JOIN, RIGHT JOIN with syntax and examples using Employee and Department tables.',marks:'8 Marks'},
+      {q:'What are keys in DBMS? Explain Primary Key, Foreign Key, Candidate Key, Super Key with examples.',marks:'6 Marks'}
+    ]},
+  s1_web_23:{title:'🌐 Internet & Web Basics – 2023 Paper',year:'2023',sem:'Semester 1',
+    questions:[
+      {q:'What is the Internet? Explain the difference between Internet and WWW. Write about the history and growth of Internet.',marks:'8 Marks'},
+      {q:'Create an HTML page for a student registration form with: Name, DOB, Gender (radio), Course (dropdown), Hobbies (checkbox), Address (textarea), Submit & Reset buttons.',marks:'10 Marks'},
+      {q:'Explain HTML Tables. Create a table showing timetable for Monday to Saturday with 6 periods using colspan and rowspan.',marks:'8 Marks'},
+      {q:'What is cybersecurity? Explain: (i) Virus vs Worm vs Trojan (ii) Phishing (iii) Firewall types (iv) SSL/HTTPS',marks:'10 Marks'},
+      {q:'Explain DNS. How does a domain name like "www.google.com" resolve to an IP address? Explain step by step.',marks:'6 Marks'},
+      {q:'Write short notes on: (i) Email protocols – SMTP, POP3, IMAP (ii) Search engine working (iii) IP Address classes',marks:'8 Marks'}
+    ]},
+  s2_oop_23:{title:'💻 OOP with Python – 2023 Paper',year:'2023',sem:'Semester 2',
+    questions:[
+      {q:'What is Object-Oriented Programming? Explain its four pillars: Encapsulation, Inheritance, Polymorphism, Abstraction with Python examples.',marks:'10 Marks'},
+      {q:'Write a Python class BankAccount with: (i) constructor with account holder name and balance (ii) deposit() method (iii) withdraw() method with balance check (iv) display() method. Create two objects and demonstrate.',marks:'10 Marks'},
+      {q:'Explain different types of Inheritance in Python with programs: Single, Multiple, Multilevel, Hierarchical.',marks:'10 Marks'},
+      {q:'What is Method Overriding? Write a program with Animal parent class and Dog, Cat child classes overriding speak() method. Also explain super().',marks:'8 Marks'},
+      {q:'Write a Python program implementing Abstract class Shape with abstract method area(). Create Circle, Rectangle, Triangle subclasses.',marks:'8 Marks'},
+      {q:'Explain Operator Overloading in Python. Overload + operator to add two Complex number objects.',marks:'6 Marks'}
+    ]},
+  s2_cn_23:{title:'🌐 Computer Networks – 2023 Paper',year:'2023',sem:'Semester 2',
+    questions:[
+      {q:'Explain the OSI Model with all 7 layers. What are the functions of each layer? Give a real-world example of data flow.',marks:'10 Marks'},
+      {q:'Compare OSI model with TCP/IP model. Draw diagrams for both and explain the differences.',marks:'8 Marks'},
+      {q:'What is IP addressing? Explain IPv4 address classes (A, B, C, D, E) with ranges and examples. What is subnetting?',marks:'10 Marks'},
+      {q:'Explain the following network devices with their functions and OSI layer: (i) Hub (ii) Switch (iii) Router (iv) Gateway (v) Repeater',marks:'10 Marks'},
+      {q:'What are network topologies? Compare Bus, Star, Ring, and Mesh topology with advantages and disadvantages.',marks:'8 Marks'},
+      {q:'Explain: (i) VPN and its types (ii) Firewall and its types (iii) DHCP working (iv) ARP protocol',marks:'8 Marks'}
+    ]},
+  s2_db_23:{title:'🗄️ Advanced DBMS – 2023 Paper',year:'2023',sem:'Semester 2',
+    questions:[
+      {q:'What are ACID properties? Explain each property with an example related to bank transactions.',marks:'8 Marks'},
+      {q:'Write SQL for: (i) Create stored procedure to get employee salary > given amount (ii) Create trigger to log deleted records in archive table.',marks:'10 Marks'},
+      {q:'Explain Transactions. Write SQL commands: BEGIN TRANSACTION, COMMIT, ROLLBACK, SAVEPOINT with an example scenario.',marks:'8 Marks'},
+      {q:'What are Views in SQL? Write SQL to: (i) Create a view of employees with salary > 50000 (ii) Use view in SELECT (iii) Drop the view.',marks:'8 Marks'},
+      {q:'Explain Concurrency Control. What is deadlock? Explain Two-Phase Locking (2PL) protocol.',marks:'8 Marks'},
+      {q:'Write SQL queries using: (i) Subquery (ii) Correlated Subquery (iii) EXISTS clause on Employee-Department tables.',marks:'8 Marks'}
+    ]},
+  s2_os_23:{title:'🖥️ Operating Systems – 2023 Paper',year:'2023',sem:'Semester 2',
+    questions:[
+      {q:'What is an Operating System? Explain its functions. Differentiate between Batch, Time-Sharing, Real-Time, and Distributed OS.',marks:'8 Marks'},
+      {q:'Explain CPU Scheduling algorithms: FCFS, SJF, Round Robin (quantum=2). Given processes P1(0,8), P2(1,4), P3(2,9), P4(3,5) – draw Gantt chart, calculate average waiting time and turnaround time for each.',marks:'12 Marks'},
+      {q:'What is Deadlock? State four necessary conditions for deadlock. Explain Banker\'s Algorithm with an example.',marks:'10 Marks'},
+      {q:'Explain Paging. How is logical address translated to physical address? What is TLB? Compare Paging vs Segmentation.',marks:'10 Marks'},
+      {q:'Explain Page Replacement Algorithms: FIFO, LRU, Optimal. Given reference string: 7,0,1,2,0,3,0,4,2,3 with 3 frames, calculate page faults for each algorithm.',marks:'10 Marks'},
+      {q:'Write short notes on: (i) Process States and PCB (ii) Semaphore and Mutex (iii) Virtual Memory',marks:'6 Marks'}
+    ]},
+  s2_dm_23:{title:'📐 Discrete Mathematics – 2023 Paper',year:'2023',sem:'Semester 2',
+    questions:[
+      {q:'Let A = {1,2,3,4,5} and B = {3,4,5,6,7}. Find: (i) A∪B (ii) A∩B (iii) A-B (iv) B-A (v) A×B (first 4 elements). Verify De Morgan\'s Law.',marks:'10 Marks'},
+      {q:'Construct truth tables for: (i) p→q (ii) p↔q (iii) ¬p∧q (iv) (p∨q)→(p∧q). Identify tautology and contradiction.',marks:'10 Marks'},
+      {q:'Explain types of Relations: Reflexive, Symmetric, Transitive, Equivalence, Partial Order. Check which properties hold for R = {(1,1),(2,2),(3,3),(1,2),(2,1)} on A={1,2,3}.',marks:'8 Marks'},
+      {q:'In how many ways can: (i) 5 students sit in 5 seats (ii) 3 students be chosen from 8 for a team (iii) letters of MATHEMATICS be arranged? Explain Permutation vs Combination.',marks:'8 Marks'},
+      {q:'Explain Graph Theory. Identify: (i) Eulerian path/circuit conditions (ii) Hamiltonian path. Is K4 Eulerian? Draw a spanning tree.',marks:'8 Marks'},
+      {q:'Simplify using Boolean Algebra: F = AB + A\'B + AB\'. Verify using truth table. State De Morgan\'s theorems.',marks:'6 Marks'}
+    ]},
+  s3_java_23:{title:'☕ Java Programming – 2023 Paper',year:'2023',sem:'Semester 3',
+    questions:[
+      {q:'Explain JVM, JDK, JRE and how Java achieves platform independence. Write a Java program to find factorial and Fibonacci using recursion.',marks:'10 Marks'},
+      {q:'What is exception handling in Java? Write a program demonstrating: (i) Multiple catch blocks (ii) Finally block (iii) Custom exception for invalid age input.',marks:'10 Marks'},
+      {q:'Explain Collections Framework. Write Java programs: (i) ArrayList to store and sort student names (ii) HashMap to store roll number → marks and find topper.',marks:'10 Marks'},
+      {q:'What is multithreading? Write a Java program with two threads: one prints even numbers 1-20 and other prints odd numbers 1-20. Explain Thread Lifecycle.',marks:'10 Marks'},
+      {q:'What is JDBC? List all JDBC steps. Write a Java program to connect MySQL database and display all records from a Student table.',marks:'10 Marks'},
+      {q:'Explain Interface vs Abstract Class. Write program: Interface Drawable with draw(). Implement Circle and Rectangle classes.',marks:'6 Marks'}
+    ]},
+  s3_web_23:{title:'🌐 Web Technology – 2023 Paper',year:'2023',sem:'Semester 3',
+    questions:[
+      {q:'Create a complete HTML5 & CSS3 responsive webpage for a college homepage with: Navigation bar, Hero section, About section, and Footer. Use Flexbox for layout.',marks:'12 Marks'},
+      {q:'Write JavaScript code: (i) Form validation – check empty fields, email format, phone (10 digits) (ii) Dynamic table: button add rows to table (iii) Fetch JSON data and display in list.',marks:'10 Marks'},
+      {q:'Write PHP program for a complete login system with: Registration form → store in MySQL, Login form → verify with session, Dashboard page → show username, Logout functionality.',marks:'12 Marks'},
+      {q:'Explain PHP-MySQL CRUD. Write PHP code to: Create a product table, Insert a product via form, Display all products in table, Delete product by ID.',marks:'10 Marks'},
+      {q:'Explain: (i) GET vs POST method differences (ii) Sessions vs Cookies – when to use which (iii) $_SERVER, $_REQUEST, $_FILES superglobals',marks:'8 Marks'},
+      {q:'Write short notes on: (i) CSS Grid vs Flexbox (ii) JavaScript Promises & Async/Await (iii) REST API and JSON',marks:'6 Marks'}
+    ]},
+  s3_sec_23:{title:'🔒 Information Security – 2023 Paper',year:'2023',sem:'Semester 3',
+    questions:[
+      {q:'What is information security? Explain CIA Triad (Confidentiality, Integrity, Availability) with examples of how each can be violated and protected.',marks:'8 Marks'},
+      {q:'Differentiate Symmetric and Asymmetric Encryption. Explain: (i) DES algorithm working (ii) RSA – key generation, encryption, decryption with small example (p=3, q=11).',marks:'12 Marks'},
+      {q:'What is a Digital Signature? Explain the process of signing and verifying a document. How does it ensure non-repudiation? Explain PKI.',marks:'10 Marks'},
+      {q:'Encrypt and decrypt the message "HELLO" using: (i) Caesar Cipher (shift=3) (ii) Vigenere Cipher (key="KEY")',marks:'8 Marks'},
+      {q:'Explain types of malware: Virus, Worm, Trojan Horse, Ransomware, Spyware, Adware. How does phishing work? How to prevent it?',marks:'8 Marks'},
+      {q:'What is VPN? How does it provide secure communication? Explain types of firewalls: Packet Filter, Stateful Inspection, Application Layer Gateway.',marks:'8 Marks'}
+    ]},
+  s3_se_23:{title:'🧠 Software Engineering – 2023 Paper',year:'2023',sem:'Semester 3',
+    questions:[
+      {q:'What is Software Engineering? Explain SDLC. Compare Waterfall, Prototype, Spiral, and Agile models with diagrams. When should each model be used?',marks:'12 Marks'},
+      {q:'What is SRS? List its components. Write a sample SRS for an "Online Library Management System" covering functional and non-functional requirements.',marks:'10 Marks'},
+      {q:'Draw a DFD (Context diagram + Level-0) for a "Student Result Management System". Explain DFD components: Process, Data Store, External Entity, Data Flow.',marks:'10 Marks'},
+      {q:'What is UML? Draw: (i) Use Case Diagram for ATM System (ii) Class Diagram for Library System (iii) Sequence Diagram for Login process.',marks:'12 Marks'},
+      {q:'Explain Software Testing: Unit, Integration, System, Acceptance Testing. Differentiate Black Box vs White Box testing. Write 5 test cases for login form.',marks:'8 Marks'},
+      {q:'What is software maintenance? Explain types: Corrective, Adaptive, Perfective, Preventive. What is software re-engineering?',marks:'6 Marks'}
+    ]},
+  s3_ec_23:{title:'📊 E-Commerce – 2023 Paper',year:'2023',sem:'Semester 3',
+    questions:[
+      {q:'What is E-Commerce? Explain its advantages and disadvantages. Compare E-Commerce and Traditional Commerce.',marks:'8 Marks'},
+      {q:'Explain E-Commerce business models: B2B, B2C, C2C, B2G with real-world Indian examples (Amazon, Flipkart, OLX, IRCTC).',marks:'10 Marks'},
+      {q:'What is a Payment Gateway? Explain step-by-step how an online payment using UPI/Credit Card works from customer to merchant.',marks:'10 Marks'},
+      {q:'What is SET (Secure Electronic Transaction)? Explain its components and how it secures online transactions. Compare SSL and SET.',marks:'8 Marks'},
+      {q:'Explain Digital Marketing channels: SEO, SEM, Email Marketing, Social Media Marketing, Affiliate Marketing. How do brands use Instagram for marketing?',marks:'8 Marks'},
+      {q:'Write short notes on: (i) M-Commerce and its applications (ii) EDI – Electronic Data Interchange (iii) Online business challenges in India',marks:'6 Marks'}
+    ]},
+  s4_ai_23:{title:'🤖 Artificial Intelligence – 2023 Paper',year:'2023',sem:'Semester 4',
+    questions:[
+      {q:'What is Artificial Intelligence? Explain its goals. Classify AI agents: Simple Reflex, Model-Based, Goal-Based, Utility-Based, Learning. Give real examples.',marks:'10 Marks'},
+      {q:'Explain the A* search algorithm. Given the following graph with heuristic values, find the optimal path from Start to Goal using A*. Show all steps with f(n) = g(n) + h(n).',marks:'12 Marks'},
+      {q:'Compare BFS and DFS for the following tree: A→(B,C), B→(D,E), C→(F). Show step-by-step traversal. Compare: Completeness, Optimality, Time & Space complexity.',marks:'10 Marks'},
+      {q:'What is Minimax algorithm? Apply it to a game tree with depth 3. Explain Alpha-Beta Pruning and show which nodes are pruned.',marks:'10 Marks'},
+      {q:'What is an Expert System? Explain its architecture: Knowledge Base, Inference Engine, User Interface. Give examples. Compare forward and backward chaining.',marks:'8 Marks'},
+      {q:'Explain Machine Learning types: Supervised, Unsupervised, Reinforcement Learning with examples. What is the difference between classification and regression?',marks:'6 Marks'}
+    ]},
+  s4_cc_23:{title:'☁️ Cloud Computing – 2023 Paper',year:'2023',sem:'Semester 4',
+    questions:[
+      {q:'What is Cloud Computing? Explain its essential characteristics: On-demand, Broad network access, Resource pooling, Rapid elasticity, Measured service.',marks:'8 Marks'},
+      {q:'Differentiate IaaS, PaaS, and SaaS with examples. Create a table comparing all three on: User control, Provider responsibility, Examples, Cost model.',marks:'10 Marks'},
+      {q:'Compare Public, Private, Hybrid, and Community Cloud deployment models. When should an organization choose each model?',marks:'8 Marks'},
+      {q:'What is Virtualization? Explain Type 1 and Type 2 Hypervisors with examples. Compare Virtual Machines and Containers (Docker). What is Docker Hub?',marks:'10 Marks'},
+      {q:'Explain AWS core services: (i) EC2 – types of instances (ii) S3 – bucket, object, storage classes (iii) Lambda – serverless computing concept',marks:'10 Marks'},
+      {q:'What are security challenges in Cloud Computing? Explain: Data encryption at rest & in transit, IAM (Identity and Access Management), SLA importance.',marks:'6 Marks'}
+    ]},
+  s4_mob_23:{title:'📱 Mobile App Development – 2023 Paper',year:'2023',sem:'Semester 4',
+    questions:[
+      {q:'Explain Android Architecture with all layers: Linux Kernel, Libraries, Android Runtime, Application Framework, Applications. What is ART vs Dalvik VM?',marks:'10 Marks'},
+      {q:'Explain Activity Lifecycle in detail with diagram. When is each callback (onCreate, onStart, onResume, onPause, onStop, onDestroy) called? Write code showing lifecycle.',marks:'12 Marks'},
+      {q:'What are Intents? Write Android code for: (i) Explicit Intent to move from MainActivity to SecondActivity passing name & age (ii) Implicit Intent to open a URL in browser.',marks:'10 Marks'},
+      {q:'Write an Android app with: (i) RecyclerView showing list of 10 students with name and marks (ii) Clicking a student shows detail in Toast (iii) Custom Adapter implementation.',marks:'12 Marks'},
+      {q:'Explain SQLite in Android. Write code to: Create a database with Student table, Insert a record, Retrieve all records, Delete by ID.',marks:'10 Marks'},
+      {q:'Compare: LinearLayout vs RelativeLayout vs ConstraintLayout. What are Fragments? Explain Fragment Lifecycle and when to use fragments.',marks:'6 Marks'}
+    ]},
+  s4_ds_23:{title:'📈 Data Science Basics – 2023 Paper',year:'2023',sem:'Semester 4',
+    questions:[
+      {q:'What is Data Science? Explain the Data Science process: Data Collection → Cleaning → Analysis → Visualization → Insights. List applications of Data Science.',marks:'8 Marks'},
+      {q:'Write Python programs using NumPy: (i) Create 2D array and perform matrix multiplication (ii) Statistical operations: mean, median, std, var on [12,45,23,67,34,89,11] (iii) Reshape, slice operations.',marks:'10 Marks'},
+      {q:'Write Python programs using Pandas: (i) Read students.csv, display first 5 rows, shape, info, describe (ii) Filter students with marks > 75 (iii) Group by department and find average marks.',marks:'10 Marks'},
+      {q:'Write Python code using Matplotlib to create: (i) Bar chart of 5 students marks (ii) Pie chart of marks distribution (iii) Line chart showing monthly sales trend (iv) Scatter plot with correlation.',marks:'10 Marks'},
+      {q:'Explain data cleaning. Write Pandas code to: (i) Find and fill missing values with mean (ii) Remove duplicate rows (iii) Handle outliers using IQR method.',marks:'8 Marks'},
+      {q:'Explain Linear Regression. Using Scikit-learn, write code to: Load dataset, split train/test (80-20), train model, predict, calculate MSE and R² score.',marks:'6 Marks'}
+    ]},
+  s4_pm_23:{title:'💼 IT Project Management – 2023 Paper',year:'2023',sem:'Semester 4',
+    questions:[
+      {q:'What is IT Project Management? Explain the 5 phases of Project Lifecycle: Initiation, Planning, Execution, Monitoring & Controlling, Closing with activities in each.',marks:'10 Marks'},
+      {q:'What is Agile? Explain Agile Manifesto (4 values, 12 principles). Compare Agile vs Waterfall methodology. When should Agile be preferred?',marks:'10 Marks'},
+      {q:'Explain Scrum Framework in detail: (i) 3 Roles: Product Owner, Scrum Master, Development Team (ii) 4 Events: Sprint Planning, Daily Standup, Sprint Review, Retrospective (iii) 3 Artifacts: Product Backlog, Sprint Backlog, Increment.',marks:'12 Marks'},
+      {q:'What is Work Breakdown Structure (WBS)? Create a WBS for an "Online Exam System" project. Also draw a Gantt chart for 3 months.',marks:'8 Marks'},
+      {q:'Explain COCOMO model for cost estimation. Calculate effort for a project of 50 KLOC using Basic COCOMO formula. Also explain Function Point Analysis.',marks:'8 Marks'},
+      {q:'What is Risk Management? Explain types of project risks. Write steps: Risk Identification → Analysis → Response Planning → Monitoring with examples.',marks:'6 Marks'}
+    ]},
+  s1_all_22:{title:'📦 Semester 1 – All Subjects 2022 Set',year:'2022',sem:'Semester 1',
+    questions:[
+      {q:'[Fundamentals] Define CPU. Explain ALU, CU, and Registers. How does a computer execute a program step by step?',marks:'8 Marks'},
+      {q:'[Python] Write a Python program using functions: (i) isPalindrome(string) (ii) countVowels(string) (iii) reverseWords(sentence)',marks:'8 Marks'},
+      {q:'[Data Structures] Explain Stack. Evaluate postfix expression: 5 3 2 * + 8 - using stack. Show each step.',marks:'8 Marks'},
+      {q:'[DBMS] What is normalization? Convert to 2NF: OrderDetails(OrderID, ProductID, ProductName, Qty, CustomerName, CustomerPhone)',marks:'8 Marks'},
+      {q:'[Web] Create an HTML page with: a table of 5 countries (Name, Capital, Population), hyperlinks, and an image with alt text.',marks:'8 Marks'}
+    ]},
+  s2_all_22:{title:'📦 Semester 2 – All Subjects 2022 Set',year:'2022',sem:'Semester 2',
+    questions:[
+      {q:'[OOP] Write a Python program with Employee class having salary calculation, and Manager subclass with bonus. Use super().',marks:'8 Marks'},
+      {q:'[Networks] Explain TCP/IP 4-layer model. What happens layer-by-layer when you type www.google.com in browser?',marks:'8 Marks'},
+      {q:'[DBMS] Write a complete stored procedure in SQL that accepts department name and returns all employees with their average salary.',marks:'8 Marks'},
+      {q:'[OS] Explain Round Robin Scheduling with quantum=3 for: P1(burst=6), P2(burst=4), P3(burst=8). Draw Gantt chart, find average waiting time.',marks:'8 Marks'},
+      {q:'[Discrete Math] Simplify Boolean expression: F = A\'BC + ABC\' + AB\'C + ABC using Boolean algebra laws.',marks:'8 Marks'}
+    ]},
+  s3_all_22:{title:'📦 Semester 3 – All Subjects 2022 Set',year:'2022',sem:'Semester 3',
+    questions:[
+      {q:'[Java] Write Java program: Interface Sortable with sort() method. Implement BubbleSortList and MergeSortList classes. Show polymorphism.',marks:'8 Marks'},
+      {q:'[Web] Create a PHP web app: form takes product name, price, quantity → store in MySQL products table → display all products with total value.',marks:'10 Marks'},
+      {q:'[Security] Encrypt "PGDCA" using: (i) Caesar Cipher key=4 (ii) Write what makes RSA more secure than DES.',marks:'8 Marks'},
+      {q:'[Software Engg] Draw UML Class Diagram for a Hospital Management System with at least 4 classes and their relationships.',marks:'8 Marks'},
+      {q:'[E-Commerce] Explain how an Indian student can set up a small online business on Amazon/Flipkart. What is seller registration process?',marks:'6 Marks'}
+    ]},
+  s4_all_22:{title:'📦 Semester 4 – All Subjects 2022 Set',year:'2022',sem:'Semester 4',
+    questions:[
+      {q:'[AI] Apply BFS on this graph starting from node A: A-B, A-C, B-D, B-E, C-F, C-G. Show visited order and queue state at each step.',marks:'8 Marks'},
+      {q:'[Cloud] A startup wants to launch an e-commerce website. Recommend whether they should use Public, Private or Hybrid cloud. Justify with cost and security analysis.',marks:'8 Marks'},
+      {q:'[Android] Write Android code for a "To-Do App" with: Add task (EditText + Button), Display tasks (ListView), Delete on long press.',marks:'10 Marks'},
+      {q:'[Data Science] Load Titanic dataset in Pandas. Find: survival rate by gender, average age, fill missing Age with median, plot survival bar chart.',marks:'8 Marks'},
+      {q:'[Project Mgmt] Your software project is running 2 weeks late. As a Scrum Master, how will you handle this in Retrospective? What corrective actions will you take?',marks:'6 Marks'}
+    ]},
+  s1_all_21:{title:'📦 Semester 1 – All Subjects 2021 Set',year:'2021',sem:'Semester 1',
+    questions:[
+      {q:'[Fundamentals] What is a computer virus? How does it spread? Explain 5 ways to protect a computer from malware and unauthorized access.',marks:'6 Marks'},
+      {q:'[Python] Write Python program using dictionary: store 5 students (name→marks). Print: topper, average, students who failed (marks < 35).',marks:'8 Marks'},
+      {q:'[Data Structures] Write algorithm and trace for Quick Sort on array: [7, 2, 9, 4, 1, 8, 3]. Show each partition step.',marks:'8 Marks'},
+      {q:'[DBMS] Draw ER diagram for a College (College, Department, Student, Course, Faculty). Show cardinality ratios.',marks:'8 Marks'},
+      {q:'[Internet] Explain how HTTPS works. What is the role of SSL certificate? How to check if a website is secure?',marks:'6 Marks'}
+    ]},
+  model_c:{title:'📄 Model Paper – Programming in Python',year:'Model Paper',sem:'All Semesters',
+    questions:[
+      {q:'Explain Python data types with examples: int, float, str, list, tuple, dict, set. When should you use tuple instead of list?',marks:'8 Marks'},
+      {q:'Write Python programs: (i) Check if a number is Armstrong number (ii) Generate prime numbers up to N using Sieve (iii) Reverse a string without slicing.',marks:'10 Marks'},
+      {q:'What are Python decorators? Write a decorator @timer that measures execution time of any function. Also explain generators with yield keyword.',marks:'8 Marks'},
+      {q:'Explain List Comprehension, Dictionary Comprehension, and Generator Expression. Write examples for: filtering even numbers, squaring a list, creating a word-count dictionary.',marks:'8 Marks'},
+      {q:'Write a class Student with: static method count_students(), class method from_string("John-90-CS"), instance method display(). Use properties with getter/setter for marks validation.',marks:'10 Marks'},
+      {q:'Explain Python modules: import, from, as. Write a module calculator.py with add, subtract, multiply, divide. Import and use in main.py.',marks:'6 Marks'}
+    ]},
+  model_db:{title:'📄 Model Paper – DBMS',year:'Model Paper',sem:'All Semesters',
+    questions:[
+      {q:'Explain the three-schema architecture of DBMS: External, Conceptual, Internal schemas. What is data independence?',marks:'8 Marks'},
+      {q:'Given the relation Employee(EmpID, Name, DeptID, Salary, ManagerID), write SQL queries: (i) Second highest salary (ii) Employees earning more than their manager (iii) Department with most employees.',marks:'10 Marks'},
+      {q:'What is a transaction? Explain ACID properties with banking example. What happens if power fails during a transaction? How does DBMS recover?',marks:'10 Marks'},
+      {q:'Explain Indexing in databases. Compare B-Tree Index and Hash Index. When would you use a composite index? Show query plan improvement.',marks:'8 Marks'},
+      {q:'Draw ER diagram for Online Food Delivery App (User, Restaurant, Menu, Order, Delivery). Convert to relational schema. Normalize to 3NF.',marks:'12 Marks'},
+      {q:'What is a cursor in PL/SQL? Write a PL/SQL block using explicit cursor to: fetch all employees with salary < 20000 and give them 10% raise.',marks:'8 Marks'}
+    ]},
+  model_java:{title:'📄 Model Paper – Java Programming',year:'Model Paper',sem:'All Semesters',
+    questions:[
+      {q:'Explain Java memory model: Stack vs Heap. What is Garbage Collection? Compare String, StringBuilder, StringBuffer with examples of when to use each.',marks:'8 Marks'},
+      {q:'What is the Collections framework hierarchy? Compare: ArrayList vs LinkedList, HashMap vs TreeMap vs LinkedHashMap, HashSet vs TreeSet. Write code demonstrating 3 differences.',marks:'10 Marks'},
+      {q:'Explain Java 8 Lambda expressions and Stream API. Write code: (i) Filter students with marks > 60 (ii) Sort by name (iii) Map to uppercase (iv) Count using streams from a List<Student>.',marks:'10 Marks'},
+      {q:'Write a complete Java program: Design Pattern – Singleton class for DatabaseConnection. Also implement Observer pattern for a stock price notification system.',marks:'10 Marks'},
+      {q:'Explain Java multithreading: (i) Create thread using Runnable (ii) Thread synchronization with synchronized keyword (iii) Producer-Consumer problem using wait() and notify().',marks:'10 Marks'},
+      {q:'What is Generics in Java? Write a generic Stack<T> class with push(), pop(), peek(), isEmpty(). Show it working with Integer and String.',marks:'8 Marks'}
+    ]},
+  model_web:{title:'📄 Model Paper – Web Technology',year:'Model Paper',sem:'All Semesters',
+    questions:[
+      {q:'Create a complete responsive e-commerce product listing page using HTML5, CSS3 (Flexbox + Grid). Include: header, search bar, product cards with image/name/price/button, and footer.',marks:'12 Marks'},
+      {q:'Write JavaScript: (i) Implement a real-time search filter for a list of items (ii) LocalStorage-based cart – add item, show cart count, clear cart (iii) Fetch API call to JSONPlaceholder and display results.',marks:'10 Marks'},
+      {q:'Explain PHP OOP. Write a PHP application: abstract class Vehicle, Car and Bike subclasses, interface Fuelable with refuel() method. Create objects and demonstrate polymorphism.',marks:'10 Marks'},
+      {q:'Build a complete PHP-MySQL blog application with: (i) Post article form (title, content, author) (ii) Display all posts with pagination (5 per page) (iii) View single post by ID (iv) Delete post with confirmation.',marks:'12 Marks'},
+      {q:'What is JavaScript ES6+? Explain and demonstrate: let/const, arrow functions, destructuring, spread operator, template literals, Promises, async/await with real examples.',marks:'8 Marks'},
+      {q:'What is AJAX? Write jQuery/vanilla JS code that: (i) Sends form data to PHP without page reload (ii) Displays loading spinner while fetching (iii) Handles errors gracefully.',marks:'8 Marks'}
+    ]}
+};
+
+function openSubject(id){
+  var d = subjectData[id];
+  if(!d) return;
+  document.getElementById('modalTitle').textContent = d.title;
+  var badge = d.type === 'pr' ? '<span class="m-badge pr">Practical – ' + d.credits + ' Credits</span>' : '<span class="m-badge th">Theory – ' + d.credits + ' Credits</span>';
+  var topicsHtml = d.topics.map(function(t){ return '<li>' + t + '</li>'; }).join('');
+  document.getElementById('modalBody').innerHTML =
+    badge +
+    '<div class="m-section"><h4>📖 Subject Overview</h4><p>' + d.desc + '</p></div>' +
+    '<div class="m-section"><h4>📋 Topics / Syllabus</h4><ul>' + topicsHtml + '</ul></div>' +
+    '<div class="m-tip"><strong>⭐ Important for Exam:</strong>' + d.imp + '</div>' +
+    '<div class="m-tip" style="margin-top:10px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;"><strong>💡 Study Tip:</strong>' + d.note + '</div>';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openPYQ(id){
+  var d = pyqData[id];
+  if(!d) return;
+  document.getElementById('modalTitle').textContent = d.title;
+  var qHtml = d.questions.map(function(q, i){
+    return '<div class="pyq-q"><div class="qno">Q' + (i+1) + '</div><p>' + q.q + '</p><div class="marks">[' + q.marks + ']</div></div>';
+  }).join('');
+  document.getElementById('modalBody').innerHTML =
+    '<span class="pyq-yr">📅 ' + d.year + ' &nbsp;|&nbsp; ' + d.sem + '</span>' +
+    qHtml +
+    '<div class="m-tip"><strong>📝 Note:</strong> Ye sample/model questions hain. Actual paper thoda alag ho sakta hai. Practice ke liye ye sab zaroor solve karo!</div>';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e){
+  if(e.target === document.getElementById('modalOverlay')) closeModalNow();
+}
+function closeModalNow(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeModalNow();
+});
+</script>
